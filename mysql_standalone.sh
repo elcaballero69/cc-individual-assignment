@@ -1,6 +1,8 @@
 sudo apt-get update
 sudo apt-get install mysql-server
 y| sudo apt install wget
+apt-get install sysbench
+y|
 sudo apt-get install unzip
 sudo mkdir sakila
 cd sakila
