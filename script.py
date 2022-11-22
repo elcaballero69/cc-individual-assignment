@@ -31,18 +31,18 @@ def createSecurityGroup(ec2_client):
 
     new_group = ec2_client.create_security_group(
         Description="SSH and HTTP access",
-        GroupName="Cloud Computing TP2",
+        GroupName="cc-individual-assignment",
         VpcId=vpc_id
     )
 
     # Wait for the security group to exist!
     new_group_waiter = ec2_client.get_waiter('security_group_exists')
-    new_group_waiter.wait(GroupNames=["Cloud Computing TP2"])
+    new_group_waiter.wait(GroupNames=["cc-individual-assignment"])
 
     group_id = new_group["GroupId"]
 
     rule_creation = ec2_client.authorize_security_group_ingress(
-        GroupName="Cloud Computing TP2",
+        GroupName="cc-individual-assignment",
         GroupId=group_id,
         IpPermissions=[{
             'FromPort': 22,
@@ -87,12 +87,61 @@ def getAvailabilityZones(ec2_client):
 
     return availabilityzones
 
+def createInstance(ec2, INSTANCE_TYPE, COUNT, SECURITY_GROUP, SUBNET_ID, VALUE, KEY):
+    """
+            function that creates EC2 instances on AWS
 
+            Parameters
+            ----------
+            ec2 : client
+                ec2 client to perform actions on AWS EC2 using boto3
+            INSTANCE_TYPE : str
+                name of the desired instance type.size
+            COUNT : int
+                number of instances to be created
+            SECURITY_GROUP : array[str]
+                array of the security groups that should be assigned to the instance
+            SUBNET_ID : str
+                subnet id that assigns the instance to a certain availability zone
+            VALUE : str
+                value of the tag
+            KEY : str
+                key of the tag
+
+            Returns
+            -------
+            array
+                list of all created instances, including their data
+
+            """
+    # Don't change these
+    KEY_NAME = "vockey"
+    INSTANCE_IMAGE = "ami-08d4ac5b634553e16"
+
+    return ec2.create_instances(
+        TagSpecifications=[
+            {
+                'ResourceType': 'instance',
+                'Tags': [
+                    {
+                        'Key': VALUE,
+                        'Value': KEY,
+                    },
+                ]
+            },
+        ],
+        ImageId=INSTANCE_IMAGE,
+        MinCount=COUNT,
+        MaxCount=COUNT,
+        InstanceType=INSTANCE_TYPE,
+        KeyName=KEY_NAME,
+        SecurityGroupIds=SECURITY_GROUP,
+        SubnetId=SUBNET_ID,
+    )
 
 def main ():
     """
         main function to process the apllication
-    :return:
     """
 
     """--------------------------------------- Get necesarry clients from boto3 ---------------------------------------"""
@@ -106,11 +155,24 @@ def main ():
 
     """--------------------------------------- Get availability Zones ---------------------------------------"""
     availabilityZones = getAvailabilityZones(ec2_client)
+    availability_zone_1a = availabilityZones.get('us-east-1a')
     print("Availability zones:")
     print("Zone 1a: ", availabilityZones.get('us-east-1a'), "\n")
 
     """--------------------------------------- Create the instances ---------------------------------------"""
-    ins_standalone = createInstances(ec2_client, ec2, SECURITY_GROUP, availabilityZones, userdata_hadoop)
+    ins_master = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Master')
+    ins_slave_1 = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Slave_1')
+    ins_slave_2 = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Slave_2')
+    ins_slave_3 = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Slave_3')
+    ins_standalone = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Standalone')
+    print("Instance IDs:")
+    '''
+    print("Master:", ins_master.id, "\n")
+    print("Slave 1:", ins_slave_1.id, "\n")
+    print("Slave 2:", ins_slave_2.id, "\n")
+    print("Slave 3:", ins_slave_3.id, "\n")
+    print("Standalone:"), ins_standalone.id, "\n"
+    '''
     """--------------------------------------- Install MySQL ---------------------------------------"""
     """--------------------------------------- ---------------------------------------"""
     """--------------------------------------- ---------------------------------------"""
