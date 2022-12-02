@@ -17,3 +17,7 @@ echo "export PATH=$MYSQLC_HOME/bin:$PATH" >> /etc/profile.d/mysqlc.sh
 source /etc/profile.d/mysqlc.sh
 sudo apt-get update && sudo apt-get -y install libncurses5
 
+# provide master-based information
+sudo mkdir -p /opt/mysqlcluster/deploy/ndb_data
+sudo chmod -R 777 /opt/mysqlcluster/home/mysqlc/bin
+sudo /opt/mysqlcluster/home/mysqlc/bin/ndbd -c ip-172-31-10-58.ec2.internal
