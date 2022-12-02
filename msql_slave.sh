@@ -1,0 +1,19 @@
+#!/bin/bash
+sudo apt-get update
+yes | sudo apt-get upgrade
+
+# Install MySQL cluster
+sudo mkdir -p /opt/mysqlcluster/home
+sudo chmod -R 777 /opt/mysqlcluster
+cd /opt/mysqlcluster/home
+wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.4/mysql-cluster-gpl-7.4.10-linux-glibc2.5-x86_64.tar.gz
+tar -zxf mysql-cluster-gpl-7.4.10-linux-glibc2.5-x86_64.tar.gz
+ln -s mysql-cluster-gpl-7.4.10-linux-glibc2.5-x86_64 mysqlc
+sudo chmod -R 777 /etc/profile.d
+
+# add MySQL PATH varibles
+echo "export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc" > /etc/profile.d/mysqlc.sh
+echo "export PATH=$MYSQLC_HOME/bin:$PATH" >> /etc/profile.d/mysqlc.sh
+source /etc/profile.d/mysqlc.sh
+sudo apt-get update && sudo apt-get -y install libncurses5
+
