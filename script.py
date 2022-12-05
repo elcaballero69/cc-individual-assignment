@@ -44,18 +44,13 @@ def createSecurityGroup(ec2_client):
     rule_creation = ec2_client.authorize_security_group_ingress(
         GroupName="cc-individual-assignment",
         GroupId=group_id,
-        IpPermissions=[{
-            'FromPort': 22,
-            'ToPort': 22,
-            'IpProtocol': 'tcp',
-            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-        },
-        {
-            'FromPort': 80,
-            'ToPort': 80,
-            'IpProtocol': 'tcp',
-            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-        }]
+        IpPermissions=[
+            {
+                'FromPort': 0,
+                'ToPort': 65535,
+                'IpProtocol': '-1',
+                'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+            }]
     )
 
     SECURITY_GROUP = [group_id]
@@ -181,6 +176,7 @@ def main ():
     """--------------------------------------- ---------------------------------------"""
     """--------------------------------------- ---------------------------------------"""
 
+    print('+++DONE+++')
 
 
 main()
