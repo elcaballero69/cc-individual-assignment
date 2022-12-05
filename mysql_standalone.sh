@@ -1,29 +1,27 @@
+#!/bin/bash
 sudo apt-get update
-sudo apt-get install mysql-server
-y| sudo apt install wget
-apt-get install sysbench
-y|
+yes | sudo apt-get install mysql-server
+sudo apt install wget
+
+# dowmload and unzip sakila
 sudo apt-get install unzip
 sudo mkdir sakila
 cd sakila
 sudo wget https://downloads.mysql.com/docs/sakila-db.zip
 sudo unzip sakila-db.zip
-sudo mysql
-mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-mysql> exit
-mysql -u root -p
-password
-mysql> SOURCE ~/sakila/sakila-db/sakila-schema.sql;
-mysql> SOURCE ~/sakila/sakila-db/sakila-data.sql;
 
+# initialize mysql and add the sakila database
+sudo mysql -e "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
+sudo mysql -e "DELETE FROM mysql.user WHERE User='';"
+sudo mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+sudo mysql -e "DROP DATABASE IF EXISTS test;"
+sudo mysql -e "FLUSH PRIVILEGES;"
+sudo mysql -e "CREATE USER 'nick'@'localhost' IDENTIFIED BY 'password';"
+sudo mysql -e "GRANT ALL PRIVILEGES on sakila.* TO 'nick'@'localhost';"
+sudo mysql -e "SOURCE /home/ubuntu/sakila/sakila-db/sakila-schema.sql;"
+sudo mysql -e "SOURCE /home/ubuntu/sakila/sakila-db/sakila-data.sql;"
 
-
-
-'''
-mysql> create database testdb;
-mysql> create user 'testuser'@'localhost' identified by 'password';
-mysql> GRANT ALL PRIVILEGES ON testdb.* TO'testuser'@'localhost';
-mysql> use testdb;
-mysql> create table customers (customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name TEXT, last_name TEXT);
-mysql> SHOW COLUMNS FROM customers;
-'''
+yes | sudo apt-get install sysbench
+# run sysbench against standalone sakila database
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=1000 /usr/share/sysbench/oltp_read_write.lua prepare
+sudo sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=1000 --num-threads=6 --max-time=60 /usr/share/sysbench/oltp_read_write.lua run
