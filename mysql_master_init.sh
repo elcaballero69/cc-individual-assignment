@@ -39,22 +39,22 @@ EOF
 # provide config.ini with current setup & replace the IP addresses with the prevalent form
 sudo cat <<EOF >config.ini
 [ndb_mgmd]
-hostname=ip-172-31-36-181.ec2.internal
+hostname=ip-172-31-46-81.ec2.internal
 datadir=/opt/mysqlcluster/deploy/ndb_data
 nodeid=1
 [ndbd default]
 noofreplicas=1
 datadir=/opt/mysqlcluster/deploy/ndb_data
 [ndbd]
-hostname=ip-172-31-33-247.ec2.internal
+hostname=ip-172-31-40-198.ec2.internal
 nodeid=3
 serverport=50501
 [ndbd]
-hostname=ip-172-31-34-236.ec2.internal
+hostname=ip-172-31-42-122.ec2.internal
 nodeid=4
 serverport=50502
 [ndbd]
-hostname=ip-172-31-36-130.ec2.internal
+hostname=ip-172-31-45-133.ec2.internal
 nodeid=5
 serverport=50503
 [mysqld]
