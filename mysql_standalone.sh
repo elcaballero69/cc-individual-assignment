@@ -23,5 +23,15 @@ sudo mysql -e "SOURCE /home/ubuntu/sakila/sakila-db/sakila-data.sql;"
 
 yes | sudo apt-get install sysbench
 # run sysbench against standalone sakila database
+# read only
 sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=1000 /usr/share/sysbench/oltp_read_write.lua prepare
-sudo sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=1000 --num-threads=6 --max-time=60 /usr/share/sysbench/oltp_read_write.lua run
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=1000 --num-threads=6 --max-time=60 /usr/share/sysbench/oltp_read_write.lua run
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_read_only.lua cleanup
+# read & write
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_read_write.lua prepare
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_read_write.lua run
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_read_write.lua cleanup
+# write only
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_write_only.lua prepare
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_write_only.lua run
+sysbench --db-driver=mysql --mysql-user=nick --mysql_password=password --mysql-db=sakila --tables=8 --table-size=100000 /usr/share/sysbench/oltp_write_only.lua cleanup
