@@ -160,14 +160,7 @@ def main ():
     ins_slave_2 = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Slave_2')
     ins_slave_3 = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Slave_3')
     ins_standalone = createInstance(ec2, 't2.micro', 1, SECURITY_GROUP, availability_zone_1a, 'Function', 'Standalone')
-    print("Instance IDs:")
-    '''
-    print("Master:", ins_master.id, "\n")
-    print("Slave 1:", ins_slave_1.id, "\n")
-    print("Slave 2:", ins_slave_2.id, "\n")
-    print("Slave 3:", ins_slave_3.id, "\n")
-    print("Standalone:"), ins_standalone.id, "\n"
-    '''
+
     """--------------------------------------- Install MySQL ---------------------------------------"""
     """--------------------------------------- ---------------------------------------"""
     """--------------------------------------- ---------------------------------------"""
